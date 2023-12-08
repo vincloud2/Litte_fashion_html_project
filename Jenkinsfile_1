@@ -1,0 +1,38 @@
+pipeline {
+    agent { label "projecta"}
+
+    stages {
+        stage('Git clone ') {
+            steps {
+                git branch: 'main', url: 'https://github.com/vincloud2/Litte_fashion_html_project.git'
+            }
+        }
+        stage('docker Build ') {
+            steps {
+                sh 'docker build -t little_fashion_vin .'
+            }
+        }
+        stage('docker tag ') {
+            steps {
+                sh 'docker tag little_fashion_vin vnom1985/little_fashion_vin:1.0'
+            }
+        }
+        stage('docker run  ') {
+            steps {
+                sh 'docker stop little_fashion_conatiner || true'
+                sh 'docker rm little_fashion_conatiner || true'
+                sh 'docker run -d --name little_fashion_conatiner -p 82:80 vnom1985/little_fashion_vin'
+            }
+        }
+        stage('docker login   ') {
+            steps {
+                sh 'docker login -u vnom1985 -p abc@12345'
+            }
+        }
+        stage('docker push    ') {
+            steps {
+                sh 'docker push vnom1985/little_fashion_vin:1.0'
+            }
+        }        
+    }
+}
